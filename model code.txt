@@ -1,0 +1,78 @@
+model {
+             for (i in 1:N){
+                      for (tt in 1:T){
+                                 y[i,tt]~dpois(mu[i,tt])    
+                                   log.rates[i,tt]<-log(rates[i,tt])                
+                                 log(mu[i,tt])<-log(n[i,tt])+log.rates[i,tt]
+                                  log.rates[i,tt]~dnorm(theta[i,tt],tau)
+                                  theta[i,tt]<-U[i]+gamma_overall[tt]+gamma[i,tt]+gllc[i,tt]*beta1+beta2*cshl[i,tt]+beta3*wengmang[i,tt]+midu[i,tt]*beta4+beta5*chuang[i,tt]+beta7*jishu[i,tt]+beta8*GDP[i,tt]+beta6*bing[i,tt]
+                                    
+            } 
+   mu.u[i]<-alpha+s[i]
+            U[i]~dnorm(mu.u[i],tau_U)   
+            r[i]<-exp(s[i])
+        
+            
+}
+r1<-exp(beta1)
+r2<-exp(beta2)
+r3<-exp(beta3)
+r4<-exp(beta4)
+r5<-exp(beta5)
+r6<-exp(beta6)
+r7<-exp(beta7)
+r8<-exp(beta8)    
+ 
+beta1~dnorm(0,0.001)
+beta2~dnorm(0,0.001)
+beta3~dnorm(0,0.001)
+beta4~dnorm(0,0.001)
+beta5~dnorm(0,0.001)
+beta6~dnorm(0,0.001)
+beta7~dnorm(0,0.001)
+beta8~dnorm(0,0.001)
+
+s[1:N]~car.normal(adj[],weights[],num[],tau_s)
+for (k in 1:sumNumNeigh){weights[k]<-1}
+sigma_s~dnorm(0,10)I(0,)
+tau_s<-pow(sigma_s,-2)
+
+
+sigma_U~dnorm(0,10)I(0,)
+tau_U<-pow(sigma_U,-2)
+
+sigma~dnorm(0,10)I(0,)
+tau<-pow(sigma,-2)
+alpha~dflat()
+
+st<-mean(gamma_overall_temp[1:T])
+for(tt in 1:T){
+            gamma_overall[tt]<-gamma_overall_temp[tt]-st
+            gamma_overall_temp[tt]~dnorm(mu_gamma_overall[tt],tau_gamma_overall)
+            mu_gamma_overall[tt]<-b0*(tt-mt)
+a[tt]<-exp(gamma_overall[tt])
+
+      }
+tau_gamma_overall<-pow(sigma_gamma_overall,-2)
+sigma_gamma_overall~dnorm(0,10)I(0,)
+
+for(i in 1:N) {
+             b1[i]~dnorm(mu_beta_sp[i],tau_b1)
+             mu_beta_sp[i]<-beta_sp[i]
+             for(tt in 1:T) {gamma[i,tt] <-b1[i]*(tt-mt)}
+}
+
+beta_sp[1:N]~car.normal(adj[],weights[],num[],tau_beta_sp)
+
+
+sigma_beta_sp~dnorm(0,10)I(0,)
+tau_beta_sp<-pow(sigma_beta_sp,-2)
+sigma_b1~dnorm(0,10)I(0,)
+tau_b1<-pow(sigma_b1,-2)
+
+b0~dflat()
+
+
+for(tt in 1:T) {time[tt]<-tt}
+mt<-mean(time[1:T])
+}

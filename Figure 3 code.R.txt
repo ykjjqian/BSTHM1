@@ -1,0 +1,4 @@
+setwd("C://Users//HP//Desktop")
+data<-read.csv("fig3.csv",header=TRUE,row.names="cn",sep=",")
+library(ggplot2)
+ggplot(data=data,aes(x=Time,y=RR))+geom_ribbon(aes(ymin=shang,ymax=xia),fill="lightgrey")+geom_line(colour="black",linetype=1,size=1)+theme_minimal()+geom_point()
